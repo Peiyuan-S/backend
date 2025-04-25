@@ -80,7 +80,7 @@ def get_flights():
     try:
         # data = fetch_flight_data(departure, arrival, date)
         # 为了省钱直接读取本地文件
-        data = parse_flight_data("backend/flights_ORD_PEK_2025-04-26.json")
+        data = parse_flight_data("flights_ORD_PEK_2025-04-26.json")
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
