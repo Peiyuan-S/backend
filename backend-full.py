@@ -7,12 +7,14 @@ from datetime import datetime
 from typing import Union
 from flask_cors import CORS
 app = Flask(__name__)
+import time
 CORS(app)
 
 def fetch_flight_data(departure_code, arrival_code, date, save=True):
-    api_key = "67dcd59b95ebbccc0af6de8f"
+    api_key = "680eb81e41bb52da5be2848f"
     url = f"https://api.flightapi.io/onewaytrip/{api_key}/{departure_code}/{arrival_code}/{date}/1/0/0/Economy/USD"
     response = requests.get(url)
+    print("API状态码:", response.status_code)
     if response.status_code == 200:
         data = response.json()
         if save:
@@ -21,7 +23,7 @@ def fetch_flight_data(departure_code, arrival_code, date, save=True):
                 json.dump(data, f, indent=4, ensure_ascii=False)
         return data
     else:
-        raise Exception(f"API request failed with status code {response.status_code}")
+        return {"error": f"API request failed with status code {response.status_code}"}
 
 def parse_flight_data(data_or_path: Union[str, dict]):
     if isinstance(data_or_path, str):
@@ -78,16 +80,11 @@ def get_flights():
     arrival = request.args.get("arrival")
     date = request.args.get("date")
     try:
-        # data = fetch_flight_data(departure, arrival, date)
-        # 为了省钱直接读取本地文件
-        import os
-
-        base_path = os.path.dirname(__file__)
-        file_path = os.path.join(base_path, "flights_ORD_PEK_2025-04-26.json")
-        data = parse_flight_data(file_path)
+        fetch_flight_data(departure, arrival, date)
+        data = parse_flight_data(f"backend/flights_{departure}_{arrival}_{date}.json")
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host='localhost', port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=True)
