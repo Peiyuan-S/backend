@@ -18,7 +18,7 @@ def fetch_flight_data(departure_code, arrival_code, date, save=True):
     if response.status_code == 200:
         data = response.json()
         if save:
-            filename = f"backend/flights_{departure_code}_{arrival_code}_{date}.json"
+            filename = f"/tmp/flights_{departure_code}_{arrival_code}_{date}.json"
             with open(filename, "w", encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         return data
@@ -81,7 +81,7 @@ def get_flights():
     date = request.args.get("date")
     try:
         fetch_flight_data(departure, arrival, date)
-        data = parse_flight_data(f"backend/flights_{departure}_{arrival}_{date}.json")
+        data = parse_flight_data(f"/tmp/flights_{departure}_{arrival}_{date}.json")
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
