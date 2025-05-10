@@ -11,7 +11,7 @@ import time
 CORS(app)
 
 def fetch_flight_data(departure_code, arrival_code, date, save=True):
-    api_key = "680eb81e41bb52da5be2848f"
+    api_key = "6817d95a4f9e135e76131836"
     url = f"https://api.flightapi.io/onewaytrip/{api_key}/{departure_code}/{arrival_code}/{date}/1/0/0/Economy/USD"
     response = requests.get(url)
     print("API状态码:", response.status_code)
